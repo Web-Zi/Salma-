@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salma Branch Inventory</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+</head>
+<body class="light-mode">
+
+    <!-- Splash Screen (2s) -->
+    <div id="splash-screen">
+        <div class="splash-content">
+            <div class="splash-logo">SALMA</div>
+            <p class="splash-subtitle">THE LUCKIN COFFEE BREAK</p>
+            <div class="loader"></div>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div id="app-container" class="hidden">
+        
+        <!-- App Header -->
+        <header class="app-header">
+            <div class="header-left">
+                <button class="theme-toggle-btn" onclick="toggleTheme()" title="تبديل المظهر">🌙 / ☀️</button>
+            </div>
+            <div class="logo-container">
+                <div class="logo">SALMA</div>
+                <p class="subtitle" id="branch-display-tag">فرع: لم يحدد بعد</p>
+            </div>
+            <div class="header-right">
+                <button class="admin-icon-btn" onclick="openAdminModal()" title="إعدادات المشرف والفرع">⚙️</button>
+            </div>
+        </header>
+
+        <!-- Horizontal Swipeable Category Tabs -->
+        <div class="tabs-slider-container">
+            <div class="tabs-wrapper" id="tabs-wrapper">
+                <!-- Dynamically populated via script.js -->
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="container">
+            <div class="date-picker-section">
+                <span id="category-title" class="category-heading">التصنيف الحالي</span>
+            </div>
+
+            <!-- Inventory Table -->
+            <div class="table-wrapper">
+                <table id="inventory-table">
+                    <thead>
+                        <tr>
+                            <th>الصنف</th>
+                            <th>التاريخ</th>
+                            <th id="th-received" class="clickable-header" onclick="requestColumnUnlock('received')">
+                                مستلم <span id="lock-icon-rec">🔒</span>
+                            </th>
+                            <th>جديد</th>
+                            <th id="th-delivered" class="clickable-header" onclick="requestColumnUnlock('delivered')">
+                                مسلم <span id="lock-icon-del">🔒</span>
+                            </th>
+                            <th>العدد</th>
+                            <th>ملاحظات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inventory-body">
+                        <!-- Items rendered dynamically -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Bottom Action Button -->
+            <div class="bottom-action-bar">
+                <button id="save-zip-btn" class="main-action-btn" onclick="handleSaveAndExport()">
+                    💾 حفظ وتصدير الجرد وإرسال للفرع الرئيسي
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Column Unlock Password Modal -->
+    <div id="password-modal" class="modal">
+        <div class="modal-content">
+            <h3 id="modal-title">إدخال كلمة المرور</h3>
+            <p id="modal-prompt-text">يرجى إدخال كلمة المرور لفتح العمود للتعديل:</p>
+            <input type="password" id="modal-password-input" placeholder="كلمة المرور...">
+            <div class="modal-actions">
+                <button onclick="verifyPasswordAction()" class="btn-confirm">تأكيد</button>
+                <button onclick="closePasswordModal()" class="btn-cancel">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Panel & Branch Settings Modal -->
+    <div id="admin-modal" class="modal">
+        <div class="modal-content">
+            <h3>لوحة المشرف وإعدادات الفرع</h3>
+            
+            <div id="admin-login-view">
+                <p>أدخل كلمة مرور المشرف:</p>
+                <input type="password" id="admin-master-input" placeholder="كلمة المرور...">
+                <div class="modal-actions">
+                    <button onclick="verifyAdminLogin()" class="btn-confirm">دخول</button>
+                    <button onclick="closeAdminModal()" class="btn-cancel">إغلاق</button>
+                </div>
+            </div>
+
+            <div id="admin-settings-view" style="display: none;">
+                <h4>إعدادات الفرع:</h4>
+                <label>اسم الفرع (Branch Name):</label>
+                <input type="text" id="branch-name-edit" placeholder="مثال: فرع بورسعيد الرئيسي">
+
+                <label>رقم هاتف الراسل:</label>
+                <input type="text" id="branch-phone-edit" placeholder="01XXXXXXXXX">
+
+                <hr style="margin: 15px 0;">
+                <h4>إدارة الأصناف والتصنيفات:</h4>
+                <label>أضف صنف جديد:</label>
+                <div style="display: flex; gap: 5px; margin-bottom: 10px;">
+                    <select id="add-item-category-select"></select>
+                    <input type="text" id="new-item-name-input" placeholder="اسم الصنف الجديد" style="margin:0;">
+                    <button onclick="addNewItem()" class="btn-confirm" style="white-space: nowrap;">أضف</button>
+                </div>
+
+                <label>أضف تصنيف (قائمة) جديد:</label>
+                <div style="display: flex; gap: 5px; margin-bottom: 15px;">
+                    <input type="text" id="new-category-name-input" placeholder="اسم القائمة الجديدة" style="margin:0;">
+                    <button onclick="addNewCategory()" class="btn-confirm" style="white-space: nowrap;">أضف</button>
+                </div>
+
+                <hr style="margin: 15px 0;">
+                <h4>تغيير كلمات المرور:</h4>
+                <label>كلمة مرور (مستلم):</label>
+                <input type="text" id="pass-received-edit">
+                
+                <label>كلمة مرور (مسلم):</label>
+                <input type="text" id="pass-delivered-edit">
+
+                <label>كلمة مرور المشرف (Admin):</label>
+                <input type="text" id="pass-admin-edit">
+
+                <div class="modal-actions" style="margin-top: 15px;">
+                    <button onclick="saveAdminSettings()" class="btn-confirm">حفظ والتحديث</button>
+                    <button onclick="closeAdminModal()" class="btn-cancel">إغلاق</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
