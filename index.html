@@ -10,7 +10,6 @@
 </head>
 <body class="light-mode">
 
-    <!-- Splash Screen (2s) -->
     <div id="splash-screen">
         <div class="splash-content">
             <div class="splash-logo">SALMA</div>
@@ -19,10 +18,7 @@
         </div>
     </div>
 
-    <!-- Main Container -->
     <div id="app-container" class="hidden">
-        
-        <!-- App Header -->
         <header class="app-header">
             <div class="header-left">
                 <button class="theme-toggle-btn" onclick="toggleTheme()" title="تبديل المظهر">🌙 / ☀️</button>
@@ -36,20 +32,15 @@
             </div>
         </header>
 
-        <!-- Horizontal Swipeable Category Tabs -->
         <div class="tabs-slider-container">
-            <div class="tabs-wrapper" id="tabs-wrapper">
-                <!-- Dynamically populated via script.js -->
-            </div>
+            <div class="tabs-wrapper" id="tabs-wrapper"></div>
         </div>
 
-        <!-- Main Content -->
         <div class="container">
             <div class="date-picker-section">
                 <span id="category-title" class="category-heading">التصنيف الحالي</span>
             </div>
 
-            <!-- Inventory Table -->
             <div class="table-wrapper">
                 <table id="inventory-table">
                     <thead>
@@ -67,13 +58,10 @@
                             <th>ملاحظات</th>
                         </tr>
                     </thead>
-                    <tbody id="inventory-body">
-                        <!-- Items rendered dynamically -->
-                    </tbody>
+                    <tbody id="inventory-body"></tbody>
                 </table>
             </div>
 
-            <!-- Bottom Action Button -->
             <div class="bottom-action-bar">
                 <button id="save-zip-btn" class="main-action-btn" onclick="handleSaveAndExport()">
                     💾 حفظ وتصدير الجرد وإرسال للفرع الرئيسي
@@ -82,7 +70,6 @@
         </div>
     </div>
 
-    <!-- Column Unlock Password Modal -->
     <div id="password-modal" class="modal">
         <div class="modal-content">
             <h3 id="modal-title">إدخال كلمة المرور</h3>
@@ -95,7 +82,6 @@
         </div>
     </div>
 
-    <!-- Admin Panel & Branch Settings Modal -->
     <div id="admin-modal" class="modal">
         <div class="modal-content">
             <h3>لوحة المشرف وإعدادات الفرع</h3>
@@ -138,13 +124,13 @@
                 <div style="display: flex; gap: 5px; margin-bottom: 10px;">
                     <select id="del-item-category-select" onchange="populateItemsForDeletion()"></select>
                     <select id="del-item-name-select" style="margin:0;"></select>
-                    <button onclick="deleteSelectedItem()" class="btn-delete" style="white-space: nowrap; background:#ef4444; color:white; border:none; padding:8px 12px; border-radius:6px; cursor:pointer;">حذف صنف</button>
+                    <button onclick="deleteSelectedItem()" style="white-space: nowrap; background:#ef4444; color:white; border:none; padding:8px 12px; border-radius:6px; cursor:pointer;">حذف صنف</button>
                 </div>
 
                 <label>حذف تصنيف (قائمة) بالكامل:</label>
                 <div style="display: flex; gap: 5px; margin-bottom: 15px;">
                     <select id="del-category-select" style="margin:0;"></select>
-                    <button onclick="deleteSelectedCategory()" class="btn-delete" style="white-space: nowrap; background:#ef4444; color:white; border:none; padding:8px 12px; border-radius:6px; cursor:pointer;">حذف القائمة</button>
+                    <button onclick="deleteSelectedCategory()" style="white-space: nowrap; background:#ef4444; color:white; border:none; padding:8px 12px; border-radius:6px; cursor:pointer;">حذف القائمة</button>
                 </div>
 
                 <hr style="margin: 15px 0;">
