@@ -118,7 +118,7 @@
                 <input type="text" id="branch-phone-edit" placeholder="01XXXXXXXXX">
 
                 <hr style="margin: 15px 0;">
-                <h4>إدارة الأصناف والتصنيفات:</h4>
+                <h4>إضافة أصناف وتصنيفات:</h4>
                 <label>أضف صنف جديد:</label>
                 <div style="display: flex; gap: 5px; margin-bottom: 10px;">
                     <select id="add-item-category-select"></select>
@@ -130,6 +130,21 @@
                 <div style="display: flex; gap: 5px; margin-bottom: 15px;">
                     <input type="text" id="new-category-name-input" placeholder="اسم القائمة الجديدة" style="margin:0;">
                     <button onclick="addNewCategory()" class="btn-confirm" style="white-space: nowrap;">أضف</button>
+                </div>
+
+                <hr style="margin: 15px 0;">
+                <h4>حذف أصناف أو تصنيفات:</h4>
+                <label>اختر القائمة لحذف صنف منها:</label>
+                <div style="display: flex; gap: 5px; margin-bottom: 10px;">
+                    <select id="del-item-category-select" onchange="populateItemsForDeletion()"></select>
+                    <select id="del-item-name-select" style="margin:0;"></select>
+                    <button onclick="deleteSelectedItem()" class="btn-delete" style="white-space: nowrap; background:#ef4444; color:white; border:none; padding:8px 12px; border-radius:6px; cursor:pointer;">حذف صنف</button>
+                </div>
+
+                <label>حذف تصنيف (قائمة) بالكامل:</label>
+                <div style="display: flex; gap: 5px; margin-bottom: 15px;">
+                    <select id="del-category-select" style="margin:0;"></select>
+                    <button onclick="deleteSelectedCategory()" class="btn-delete" style="white-space: nowrap; background:#ef4444; color:white; border:none; padding:8px 12px; border-radius:6px; cursor:pointer;">حذف القائمة</button>
                 </div>
 
                 <hr style="margin: 15px 0;">
