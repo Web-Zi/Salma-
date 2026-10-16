@@ -1,56 +1,27 @@
 const defaultCategories = [
     {
         name: "قائمة 1 (أساسي)",
-        items: [
-            "سكر", "بن فاتح سادة", "بن فاتح محوج", "بن غامق محوج", "بن بندق",
-            "اسبرسو", "تست", "كراسون", "تشيز كيك", "اكلير", "ملفاي",
-            "براونز", "دوناتس", "عجينة وافل", "عجينة كباكي", "ساندوتش ميكس جبن تركي",
-            "كوب دوناتس", "غطاء دوناتس", "فاكهة حشو فراولة", "فاكهة حشو عنب بري"
-        ]
+        items: ["سكر", "بن فاتح سادة", "بن فاتح محوج", "بن غامق محوج", "بن بندق", "اسبرسو", "تست", "كراسون", "تشيز كيك", "اكلير", "ملفاي", "براونز", "دوناتس", "عجينة وافل", "عجينة كباكي", "ساندوتش ميكس جبن تركي", "كوب دوناتس", "غطاء دوناتس", "فاكهة حشو فراولة", "فاكهة حشو عنب بري"]
     },
     {
         name: "قائمة 2 (المشروبات)",
-        items: [
-            "كوفي ميكس", "نسكافيه بلاك", "بنجورنو بندق", "بنجورنو فانيليا", "لاتيه",
-            "لاتيه كرمَل", "موكه", "هوت شوكلت برباك", "هوت شوكلت كابري", "هوت ميلك موز",
-            "هوت ميلك فراولة", "هوت ميلك توت", "بطاطا بودر", "شاي السلام", "احمد تي قرنفل",
-            "شاي لبتون", "شاي فواكه", "شاي اخضر", "جنجبيل ليمون", "ينسون", "نعناع", "كركديه"
-        ]
+        items: ["كوفي ميكس", "نسكافيه بلاك", "بنجورنو بندق", "بنجورنو فانيليا", "لاتيه", "لاتيه كرمَل", "موكه", "هوت شوكلت برباك", "هوت شوكلت كابري", "هوت ميلك موز", "هوت ميلك فراولة", "هوت ميلك توت", "بطاطا بودر", "شاي السلام", "احمد تي قرنفل", "شاي لبتون", "شاي فواكه", "شاي اخضر", "جنجبيل ليمون", "ينسون", "نعناع", "كركديه"]
     },
     {
         name: "قائمة 3 (الحلويات والصوصات)",
-        items: [
-            "شيكولاته وايت", "شيكولاته براون", "شيكولاته كندر", "شيكولاته لوتس", "شيكولاته بندق",
-            "صوص كرمَل", "صوص درك", "صوص كوكيز", "صوص بندق", "صوص جوز هند",
-            "صوص فراولة", "كريم باستري", "اضافة بندق مبشور", "اضافة مرشملو",
-            "جالون اوريو", "جالون لوتس", "علبة كيري", "علبة جلاكسي", "علبة مندولين",
-            "قرنفل حبوب", "جوز هند خشن"
-        ]
+        items: ["شيكولاته وايت", "شيكولاته براون", "شيكولاته كندر", "شيكولاته لوتس", "شيكولاته بندق", "صوص كرمَل", "صوص درك", "صوص كوكيز", "صوص بندق", "صوص جوز هند", "صوص فراولة", "كريم باستري", "اضافة بندق مبشور", "اضافة مرشملو", "جالون اوريو", "جالون لوتس", "علبة كيري", "علبة جلاكسي", "علبة مندولين", "قرنفل حبوب", "جوز هند خشن"]
     },
     {
         name: "قائمة 4 (الأكواب والمستلزمات)",
-        items: [
-            "كوب سخن ٤", "كوب سخن ٧", "كوب سخن ٨", "كوب سخن ١٢", "غطاء سخن",
-            "كوب ساقعان ١٠", "كوب ساقعان ١٢", "كوب ساقعان ١٦", "كوب صين داي",
-            "غطاء ساقعان", "علب وافل M", "علب وافل L", "علب وافل XL",
-            "جراب بوست", "جراب أيس كريم", "ورق زيدة", "سندضة بلاستيك",
-            "شاليموه", "معالق", "شوكة", "سكينة", "أكياس كراش", "اطباق فوم"
-        ]
+        items: ["كوب سخن ٤", "كوب سخن ٧", "كوب سخن ٨", "كوب سخن ١٢", "غطاء سخن", "كوب ساقعان ١٠", "كوب ساقعان ١٢", "كوب ساقعان ١٦", "كوب صين داي", "غطاء ساقعان", "علب وافل M", "علب وافل L", "علب وافل XL", "جراب بوست", "جراب أيس كريم", "ورق زيدة", "سندضة بلاستيك", "شاليموه", "معالق", "شوكة", "سكينة", "أكياس كراش", "اطباق فوم"]
     },
     {
         name: "قائمة 5 (المستلزمات العامة)",
-        items: [
-            "مكسرات سحلب", "عصير تفاح", "زبيب", "قرفة عيدان", "سحلب",
-            "فانيليا", "بيكينج بودر", "زبده", "كرتونة مياه", "بالتة ردبل",
-            "مناديل", "بكر استريتش", "باليتة تشيز كيك", "علبة كرواسون",
-            "دقيق", "زيت", "مفرش سفرة", "بكر كاشير", "لبن"
-        ]
+        items: ["مكسرات سحلب", "عصير تفاح", "زبيب", "قرفة عيدان", "سحلب", "فانيليا", "بيكينج بودر", "زبده", "كرتونة مياه", "بالتة ردبل", "مناديل", "بكر استريتش", "باليتة تشيز كيك", "علبة كرواسون", "دقيق", "زيت", "مفرش سفرة", "بكر كاشير", "لبن"]
     },
     {
         name: "قائمة 6 (المخزون العام)",
-        items: [
-            "مخزون عام 1", "مخزون عام 2", "مخزون عام 3", "مخزون عام 4", "مخزون عام 5"
-        ]
+        items: ["مخزون عام 1", "مخزون عام 2", "مخزون عام 3", "مخزون عام 4", "مخزون عام 5"]
     }
 ];
 
@@ -245,7 +216,7 @@ function loadSavedData() {
     }
 }
 
-// Export All Categories and Send Report Payload
+// Export and send directly to HQ App storage bridge (No WhatsApp)
 async function handleSaveAndExport() {
     saveCurrentCategoryState();
     const branch = getBranchInfo();
@@ -284,37 +255,31 @@ async function handleSaveAndExport() {
 
     const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
     const excelBlob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-
     const downloadUrl = URL.createObjectURL(excelBlob);
     const fileName = `Inventory_${branch.name}_${todayStr}.xlsx`;
 
-    const reportPayload = {
+    const newReport = {
+        id: Date.now(),
         branchName: branch.name,
         phone: branch.phone,
         date: todayStr,
         excelFileName: fileName,
-        downloadUrl: downloadUrl
+        downloadUrl: downloadUrl,
+        checked: false
     };
 
-    const whatsappMessage = encodeURIComponent(
-        `📌 *تقرير جرد جديد - سلمى كافيه*\n` +
-        `🏢 *الفرع:* ${branch.name}\n` +
-        `📞 *الهاتف:* ${branch.phone}\n` +
-        `📅 *التاريخ:* ${todayStr}\n` +
-        `📁 *الملف:* ${fileName}\n\n` +
-        `رابط البلاغ التلقائي للفرع الرئيسي: salmahq://receive?data=${encodeURIComponent(JSON.stringify(reportPayload))}`
-    );
-
-    window.location.href = `https://api.whatsapp.com/send?text=${whatsappMessage}`;
+    // Push directly to HQ shared log (Simulating direct web link transfer)
+    let existingHQReports = JSON.parse(localStorage.getItem('salma_hq_reports_log') || '[]');
+    existingHQReports.unshift(newReport);
+    localStorage.setItem('salma_hq_reports_log', JSON.stringify(existingHQReports));
 
     categories.forEach((_, catIdx) => localStorage.removeItem(`salma_cat_${catIdx}`));
     isReceivedUnlocked = false;
     isDeliveredUnlocked = false;
     renderTable();
-    alert("تم حفظ الجرد وتجهيز الرسالة للفرع الرئيسي بنجاح!");
+    alert("تم إرسال تقرير الجرد بنجاح إلى نظام الفرع الرئيسي (HQ)!");
 }
 
-// Admin Modal Actions
 function openAdminModal() {
     document.getElementById('admin-master-input').value = "";
     document.getElementById('admin-login-view').style.display = "block";
@@ -342,7 +307,6 @@ function verifyAdminLogin() {
         document.getElementById('pass-delivered-edit').value = pws.delivered;
         document.getElementById('pass-admin-edit').value = pws.admin;
 
-        // Populate Select Dropdowns for Adding/Deleting Items
         populateAdminDropdowns();
     } else {
         alert("كلمة مرور المشرف غير صحيحة!");
@@ -350,14 +314,12 @@ function verifyAdminLogin() {
 }
 
 function populateAdminDropdowns() {
-    // Add item select
     const addSel = document.getElementById('add-item-category-select');
     addSel.innerHTML = "";
     categories.forEach((cat, idx) => {
         addSel.innerHTML += `<option value="${idx}">${cat.name}</option>`;
     });
 
-    // Delete item category select
     const delCatSel = document.getElementById('del-item-category-select');
     delCatSel.innerHTML = "";
     categories.forEach((cat, idx) => {
@@ -365,7 +327,6 @@ function populateAdminDropdowns() {
     });
     populateItemsForDeletion();
 
-    // Delete category select
     const delCatOnlySel = document.getElementById('del-category-select');
     delCatOnlySel.innerHTML = "";
     categories.forEach((cat, idx) => {
