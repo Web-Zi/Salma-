@@ -1,4 +1,3 @@
-// Default initial category list (stored in LocalStorage to allow Admin dynamic edits)
 const defaultCategories = [
     {
         name: "قائمة 1 (أساسي)",
@@ -110,6 +109,8 @@ function updateBranchTag() {
 function renderTabs() {
     const wrapper = document.getElementById("tabs-wrapper");
     wrapper.innerHTML = "";
+    if (currentCategoryIndex >= categories.length) currentCategoryIndex = 0;
+    
     categories.forEach((cat, idx) => {
         const btn = document.createElement("button");
         btn.className = `tab-btn ${idx === currentCategoryIndex ? 'active' : ''}`;
@@ -133,6 +134,7 @@ function renderTable() {
     const tbody = document.getElementById("inventory-body");
     tbody.innerHTML = "";
 
+    if (categories.length === 0) return;
     const currentCat = categories[currentCategoryIndex];
     document.getElementById("category-title").innerText = currentCat.name;
 
@@ -207,6 +209,7 @@ function calculateTotal(index) {
 }
 
 function saveCurrentCategoryState() {
+    if (categories.length === 0) return;
     const currentCat = categories[currentCategoryIndex];
     const data = [];
     currentCat.items.forEach((item, index) => {
@@ -242,7 +245,7 @@ function loadSavedData() {
     }
 }
 
-// Export All Categories and Send Report Payload to HQ App
+// Export All Categories and Send Report Payload
 async function handleSaveAndExport() {
     saveCurrentCategoryState();
     const branch = getBranchInfo();
@@ -282,11 +285,9 @@ async function handleSaveAndExport() {
     const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
     const excelBlob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
 
-    // Save Local Excel Copy
     const downloadUrl = URL.createObjectURL(excelBlob);
     const fileName = `Inventory_${branch.name}_${todayStr}.xlsx`;
 
-    // Construct Payload URL/Message for HQ Receiver App
     const reportPayload = {
         branchName: branch.name,
         phone: branch.phone,
@@ -304,10 +305,8 @@ async function handleSaveAndExport() {
         `رابط البلاغ التلقائي للفرع الرئيسي: salmahq://receive?data=${encodeURIComponent(JSON.stringify(reportPayload))}`
     );
 
-    // Open WhatsApp / Share intent
     window.location.href = `https://api.whatsapp.com/send?text=${whatsappMessage}`;
 
-    // Reset local cache
     categories.forEach((_, catIdx) => localStorage.removeItem(`salma_cat_${catIdx}`));
     isReceivedUnlocked = false;
     isDeliveredUnlocked = false;
@@ -343,14 +342,46 @@ function verifyAdminLogin() {
         document.getElementById('pass-delivered-edit').value = pws.delivered;
         document.getElementById('pass-admin-edit').value = pws.admin;
 
-        // Populate Category Select dropdown for adding items
-        const select = document.getElementById('add-item-category-select');
-        select.innerHTML = "";
-        categories.forEach((cat, idx) => {
-            select.innerHTML += `<option value="${idx}">${cat.name}</option>`;
-        });
+        // Populate Select Dropdowns for Adding/Deleting Items
+        populateAdminDropdowns();
     } else {
         alert("كلمة مرور المشرف غير صحيحة!");
+    }
+}
+
+function populateAdminDropdowns() {
+    // Add item select
+    const addSel = document.getElementById('add-item-category-select');
+    addSel.innerHTML = "";
+    categories.forEach((cat, idx) => {
+        addSel.innerHTML += `<option value="${idx}">${cat.name}</option>`;
+    });
+
+    // Delete item category select
+    const delCatSel = document.getElementById('del-item-category-select');
+    delCatSel.innerHTML = "";
+    categories.forEach((cat, idx) => {
+        delCatSel.innerHTML += `<option value="${idx}">${cat.name}</option>`;
+    });
+    populateItemsForDeletion();
+
+    // Delete category select
+    const delCatOnlySel = document.getElementById('del-category-select');
+    delCatOnlySel.innerHTML = "";
+    categories.forEach((cat, idx) => {
+        delCatOnlySel.innerHTML += `<option value="${idx}">${cat.name}</option>`;
+    });
+}
+
+function populateItemsForDeletion() {
+    const catIdx = document.getElementById('del-item-category-select').value;
+    const itemSel = document.getElementById('del-item-name-select');
+    itemSel.innerHTML = "";
+
+    if (categories[catIdx] && categories[catIdx].items) {
+        categories[catIdx].items.forEach((item, itemIdx) => {
+            itemSel.innerHTML += `<option value="${itemIdx}">${item}</option>`;
+        });
     }
 }
 
@@ -363,6 +394,7 @@ function addNewItem() {
     categories[catIndex].items.push(newItemName);
     localStorage.setItem('salma_categories_config', JSON.stringify(categories));
     document.getElementById('new-item-name-input').value = "";
+    populateAdminDropdowns();
     renderTable();
     alert(`تم إضافة (${newItemName}) بنجاح!`);
 }
@@ -374,8 +406,42 @@ function addNewCategory() {
     categories.push({ name: newCatName, items: ["صنف جديد 1"] });
     localStorage.setItem('salma_categories_config', JSON.stringify(categories));
     document.getElementById('new-category-name-input').value = "";
+    populateAdminDropdowns();
     renderTabs();
+    renderTable();
     alert(`تم إضافة قائمة (${newCatName}) بنجاح!`);
+}
+
+function deleteSelectedItem() {
+    const catIdx = document.getElementById('del-item-category-select').value;
+    const itemIdx = document.getElementById('del-item-name-select').value;
+
+    if (catIdx === "" || itemIdx === "") return alert("يرجى اختيار الصنف المراد حذفه!");
+
+    const itemName = categories[catIdx].items[itemIdx];
+    if (confirm(`هل أنت متأكد من حذف الصنف (${itemName})؟`)) {
+        categories[catIdx].items.splice(itemIdx, 1);
+        localStorage.setItem('salma_categories_config', JSON.stringify(categories));
+        populateAdminDropdowns();
+        renderTable();
+        alert("تم حذف الصنف بنجاح!");
+    }
+}
+
+function deleteSelectedCategory() {
+    const catIdx = document.getElementById('del-category-select').value;
+    if (categories.length <= 1) return alert("لا يمكنك حذف جميع القوائم! يجب أن تبقى قائمة واحدة على الأقل.");
+
+    const catName = categories[catIdx].name;
+    if (confirm(`هل أنت متأكد من حذف القائمة بالكامل (${catName})؟`)) {
+        categories.splice(catIdx, 1);
+        localStorage.setItem('salma_categories_config', JSON.stringify(categories));
+        currentCategoryIndex = 0;
+        populateAdminDropdowns();
+        renderTabs();
+        renderTable();
+        alert("تم حذف القائمة بنجاح!");
+    }
 }
 
 function saveAdminSettings() {
