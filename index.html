@@ -4,148 +4,144 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Salma Branch Inventory</title>
-    <link rel="stylesheet" href="styles.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <!-- SheetJS for Excel generation & JSZip for compression -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 </head>
-<body class="light-mode">
+<body class="dark-mode">
 
+    <!-- Splash Screen -->
     <div id="splash-screen">
-        <div class="splash-content">
-            <div class="splash-logo">SALMA</div>
-            <p class="splash-subtitle">THE LUCKIN COFFEE BREAK</p>
-            <div class="loader"></div>
-        </div>
+        <h2>جاري تحميل جرد سلمى...</h2>
     </div>
 
+    <!-- Main Container -->
     <div id="app-container" class="hidden">
-        <header class="app-header">
+        
+        <!-- Header -->
+        <header>
             <div class="header-left">
-                <button class="theme-toggle-btn" onclick="toggleTheme()" title="تبديل المظهر">🌙 / ☀️</button>
+                <h1>جرد فرع سلمى</h1>
+                <span id="branch-display-tag" class="branch-tag">فرع: جاري التحميل...</span>
             </div>
-            <div class="logo-container">
-                <div class="logo">SALMA</div>
-                <p class="subtitle" id="branch-display-tag">فرع: لم يحدد بعد</p>
-            </div>
-            <div class="header-right">
-                <button class="admin-icon-btn" onclick="openAdminModal()" title="إعدادات المشرف والفرع">⚙️</button>
+            <div class="header-actions">
+                <button onclick="toggleTheme()" class="btn-theme">🌓 المظهر</button>
+                <button onclick="openAdminModal()" class="btn-admin">⚙️ الإدارة</button>
             </div>
         </header>
 
-        <div class="tabs-slider-container">
-            <div class="tabs-wrapper" id="tabs-wrapper"></div>
+        <!-- Navigation Tabs for Categories -->
+        <nav id="tabs-wrapper" class="tabs-container"></nav>
+
+        <!-- Dynamic Category Title -->
+        <h2 id="category-title" class="section-title">--</h2>
+
+        <!-- Table View -->
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>الصنف</th>
+                        <th>التاريخ</th>
+                        <th onclick="requestColumnUnlock('received')" class="clickable-header">
+                            مستلم <span id="lock-icon-rec">🔒</span>
+                        </th>
+                        <th>جديد</th>
+                        <th onclick="requestColumnUnlock('delivered')" class="clickable-header">
+                            مسلم <span id="lock-icon-del">🔒</span>
+                        </th>
+                        <th>العدد النهائي</th>
+                        <th>ملاحظات</th>
+                    </tr>
+                </thead>
+                <tbody id="inventory-body"></tbody>
+            </table>
         </div>
 
-        <div class="container">
-            <div class="date-picker-section">
-                <span id="category-title" class="category-heading">التصنيف الحالي</span>
-            </div>
-
-            <div class="table-wrapper">
-                <table id="inventory-table">
-                    <thead>
-                        <tr>
-                            <th>الصنف</th>
-                            <th>التاريخ</th>
-                            <th id="th-received" class="clickable-header" onclick="requestColumnUnlock('received')">
-                                مستلم <span id="lock-icon-rec">🔒</span>
-                            </th>
-                            <th>جديد</th>
-                            <th id="th-delivered" class="clickable-header" onclick="requestColumnUnlock('delivered')">
-                                مسلم <span id="lock-icon-del">🔒</span>
-                            </th>
-                            <th>العدد</th>
-                            <th>ملاحظات</th>
-                        </tr>
-                    </thead>
-                    <tbody id="inventory-body"></tbody>
-                </table>
-            </div>
-
-            <div class="bottom-action-bar">
-                <button id="save-zip-btn" class="main-action-btn" onclick="handleSaveAndExport()">
-                    💾 حفظ وتصدير الجرد وإرسال للفرع الرئيسي
-                </button>
-            </div>
+        <!-- Submit & Sync Action Button -->
+        <div class="action-footer">
+            <button onclick="handleSaveAndExport()" class="btn-submit">💾 حفظ وتصدير للسحابة (الرئيسي)</button>
         </div>
     </div>
 
-    <div id="password-modal" class="modal">
-        <div class="modal-content">
-            <h3 id="modal-title">إدخال كلمة المرور</h3>
-            <p id="modal-prompt-text">يرجى إدخال كلمة المرور لفتح العمود للتعديل:</p>
-            <input type="password" id="modal-password-input" placeholder="كلمة المرور...">
+    <!-- Column Password Unlock Modal -->
+    <div id="password-modal" class="modal-overlay">
+        <div class="modal-card">
+            <h3 id="modal-title">فتح العمود</h3>
+            <p id="modal-prompt-text">أدخل كلمة المرور:</p>
+            <input type="password" id="modal-password-input" placeholder="****">
             <div class="modal-actions">
-                <button onclick="verifyPasswordAction()" class="btn-confirm">تأكيد</button>
+                <button onclick="verifyPasswordAction()" class="btn-confirm">تاكيد</button>
                 <button onclick="closePasswordModal()" class="btn-cancel">إلغاء</button>
             </div>
         </div>
     </div>
 
-    <div id="admin-modal" class="modal">
-        <div class="modal-content">
-            <h3>لوحة المشرف وإعدادات الفرع</h3>
+    <!-- Admin Panel Settings Modal -->
+    <div id="admin-modal" class="modal-overlay">
+        <div class="modal-card admin-card">
+            <h3>لوحة تحكم المشرف</h3>
             
             <div id="admin-login-view">
                 <p>أدخل كلمة مرور المشرف:</p>
-                <input type="password" id="admin-master-input" placeholder="كلمة المرور...">
+                <input type="password" id="admin-master-input" placeholder="****">
                 <div class="modal-actions">
                     <button onclick="verifyAdminLogin()" class="btn-confirm">دخول</button>
-                    <button onclick="closeAdminModal()" class="btn-cancel">إغلاق</button>
+                    <button onclick="closeAdminModal()" class="btn-cancel">إلغاء</button>
                 </div>
             </div>
 
-            <div id="admin-settings-view" style="display: none;">
-                <h4>إعدادات الفرع:</h4>
-                <label>اسم الفرع (Branch Name):</label>
-                <input type="text" id="branch-name-edit" placeholder="مثال: فرع بورسعيد الرئيسي">
-
-                <label>رقم هاتف الراسل:</label>
-                <input type="text" id="branch-phone-edit" placeholder="01XXXXXXXXX">
-
-                <hr style="margin: 15px 0;">
-                <h4>إضافة أصناف وتصنيفات:</h4>
-                <label>أضف صنف جديد:</label>
-                <div style="display: flex; gap: 5px; margin-bottom: 10px;">
-                    <select id="add-item-category-select"></select>
-                    <input type="text" id="new-item-name-input" placeholder="اسم الصنف الجديد" style="margin:0;">
-                    <button onclick="addNewItem()" class="btn-confirm" style="white-space: nowrap;">أضف</button>
+            <div id="admin-settings-view" style="display:none;">
+                <div class="admin-section">
+                    <h4>بيانات الفرع</h4>
+                    <label>اسم الفرع:</label>
+                    <input type="text" id="branch-name-edit">
+                    <label>رقم الهاتف:</label>
+                    <input type="text" id="branch-phone-edit">
                 </div>
 
-                <label>أضف تصنيف (قائمة) جديد:</label>
-                <div style="display: flex; gap: 5px; margin-bottom: 15px;">
-                    <input type="text" id="new-category-name-input" placeholder="اسم القائمة الجديدة" style="margin:0;">
-                    <button onclick="addNewCategory()" class="btn-confirm" style="white-space: nowrap;">أضف</button>
+                <div class="admin-section">
+                    <h4>تعديل كلمات المرور</h4>
+                    <label>كلمة مرور (مستلم):</label>
+                    <input type="text" id="pass-received-edit">
+                    <label>كلمة مرور (مسلم):</label>
+                    <input type="text" id="pass-delivered-edit">
+                    <label>كلمة مرور (المشرف):</label>
+                    <input type="text" id="pass-admin-edit">
                 </div>
 
-                <hr style="margin: 15px 0;">
-                <h4>حذف أصناف أو تصنيفات:</h4>
-                <label>اختر القائمة لحذف صنف منها:</label>
-                <div style="display: flex; gap: 5px; margin-bottom: 10px;">
-                    <select id="del-item-category-select" onchange="populateItemsForDeletion()"></select>
-                    <select id="del-item-name-select" style="margin:0;"></select>
-                    <button onclick="deleteSelectedItem()" style="white-space: nowrap; background:#ef4444; color:white; border:none; padding:8px 12px; border-radius:6px; cursor:pointer;">حذف صنف</button>
+                <div class="admin-section">
+                    <h4>إدارة الأصناف والقوائم</h4>
+                    <div class="crud-block">
+                        <label>إضافة صنف جديد:</label>
+                        <select id="add-item-category-select"></select>
+                        <input type="text" id="new-item-name-input" placeholder="اسم الصنف الجديد">
+                        <button onclick="addNewItem()" class="btn-sm">إضافة صنف</button>
+                    </div>
+
+                    <div class="crud-block">
+                        <label>حذف صنف:</label>
+                        <select id="del-item-category-select" onchange="populateItemsForDeletion()"></select>
+                        <select id="del-item-name-select"></select>
+                        <button onclick="deleteSelectedItem()" class="btn-sm btn-danger">حذف الصنف</button>
+                    </div>
+
+                    <div class="crud-block">
+                        <label>إضافة قائمة (تصنيف) جديد:</label>
+                        <input type="text" id="new-category-name-input" placeholder="اسم القائمة الجديدة">
+                        <button onclick="addNewCategory()" class="btn-sm">إضافة قائمة</button>
+                    </div>
+
+                    <div class="crud-block">
+                        <label>حذف قائمة بالكامل:</label>
+                        <select id="del-category-select"></select>
+                        <button onclick="deleteSelectedCategory()" class="btn-sm btn-danger">حذف القائمة</button>
+                    </div>
                 </div>
 
-                <label>حذف تصنيف (قائمة) بالكامل:</label>
-                <div style="display: flex; gap: 5px; margin-bottom: 15px;">
-                    <select id="del-category-select" style="margin:0;"></select>
-                    <button onclick="deleteSelectedCategory()" style="white-space: nowrap; background:#ef4444; color:white; border:none; padding:8px 12px; border-radius:6px; cursor:pointer;">حذف القائمة</button>
-                </div>
-
-                <hr style="margin: 15px 0;">
-                <h4>تغيير كلمات المرور:</h4>
-                <label>كلمة مرور (مستلم):</label>
-                <input type="text" id="pass-received-edit">
-                
-                <label>كلمة مرور (مسلم):</label>
-                <input type="text" id="pass-delivered-edit">
-
-                <label>كلمة مرور المشرف (Admin):</label>
-                <input type="text" id="pass-admin-edit">
-
-                <div class="modal-actions" style="margin-top: 15px;">
-                    <button onclick="saveAdminSettings()" class="btn-confirm">حفظ والتحديث</button>
+                <div class="modal-actions">
+                    <button onclick="saveAdminSettings()" class="btn-confirm">حفظ الإعدادات</button>
                     <button onclick="closeAdminModal()" class="btn-cancel">إغلاق</button>
                 </div>
             </div>
