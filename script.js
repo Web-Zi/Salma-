@@ -163,6 +163,8 @@ function calculateRowTotal(inputElem) {
 function saveCurrentCategoryState() {
     const tbody = document.getElementById('inventory-body');
     const rows = tbody.querySelectorAll('tr');
+    if (!rows || rows.length === 0) return;
+
     const catData = [];
 
     rows.forEach((tr, rIdx) => {
@@ -180,8 +182,10 @@ function saveCurrentCategoryState() {
     localStorage.setItem(`salma_cat_${currentCategoryIndex}`, JSON.stringify(catData));
 }
 
-// Toggle Lock / Unlock for Received and Delivered columns (Fixed Toggle Logic)
+// Toggle Lock / Unlock for Received and Delivered columns (Preserving typed values)
 function requestColumnUnlock(type) {
+    saveCurrentCategoryState();
+
     if (type === 'received') {
         if (isReceivedUnlocked) {
             isReceivedUnlocked = false;
@@ -224,7 +228,7 @@ function verifyPasswordAction() {
     }
 }
 
-// Save & Sync Handler (Document / Report Format)
+// Save & Sync Handler
 async function handleSaveAndExport() {
     saveCurrentCategoryState();
     const branch = getBranchInfo();
