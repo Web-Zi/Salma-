@@ -1,27 +1,60 @@
+// Google Apps Script Cloud API Endpoint
+const CLOUD_API_URL = "https://script.google.com/macros/s/AKfycby-HCCNrYC-ZB0IKRFfZP2w4CXz2SmLz3MNJbGUCRGsywhTNe096MLxLaOU6L4GA3PRuA/exec";
+
+// Default Categories Configuration
 const defaultCategories = [
     {
         name: "قائمة 1 (أساسي)",
-        items: ["سكر", "بن فاتح سادة", "بن فاتح محوج", "بن غامق محوج", "بن بندق", "اسبرسو", "تست", "كراسون", "تشيز كيك", "اكلير", "ملفاي", "براونز", "دوناتس", "عجينة وافل", "عجينة كباكي", "ساندوتش ميكس جبن تركي", "كوب دوناتس", "غطاء دوناتس", "فاكهة حشو فراولة", "فاكهة حشو عنب بري"]
+        items: [
+            "سكر", "بن فاتح سادة", "بن فاتح محوج", "بن غامق محوج", "بن بندق",
+            "اسبرسو", "تست", "كراسون", "تشيز كيك", "اكلير", "ملفاي",
+            "براونز", "دوناتس", "عجينة وافل", "عجينة كباكي", "ساندوتش ميكس جبن تركي",
+            "كوب دوناتس", "غطاء دوناتس", "فاكهة حشو فراولة", "فاكهة حشو عنب بري"
+        ]
     },
     {
         name: "قائمة 2 (المشروبات)",
-        items: ["كوفي ميكس", "نسكافيه بلاك", "بنجورنو بندق", "بنجورنو فانيليا", "لاتيه", "لاتيه كرمَل", "موكه", "هوت شوكلت برباك", "هوت شوكلت كابري", "هوت ميلك موز", "هوت ميلك فراولة", "هوت ميلك توت", "بطاطا بودر", "شاي السلام", "احمد تي قرنفل", "شاي لبتون", "شاي فواكه", "شاي اخضر", "جنجبيل ليمون", "ينسون", "نعناع", "كركديه"]
+        items: [
+            "كوفي ميكس", "نسكافيه بلاك", "بنجورنو بندق", "بنجورنو فانيليا", "لاتيه",
+            "لاتيه كرمَل", "موكه", "هوت شوكلت برباك", "هوت شوكلت كابري", "هوت ميلك موز",
+            "هوت ميلك فراولة", "هوت ميلك توت", "بطاطا بودر", "شاي السلام", "احمد تي قرنفل",
+            "شاي لبتون", "شاي فواكه", "شاي اخضر", "جنجبيل ليمون", "ينسون", "نعناع", "كركديه"
+        ]
     },
     {
         name: "قائمة 3 (الحلويات والصوصات)",
-        items: ["شيكولاته وايت", "شيكولاته براون", "شيكولاته كندر", "شيكولاته لوتس", "شيكولاته بندق", "صوص كرمَل", "صوص درك", "صوص كوكيز", "صوص بندق", "صوص جوز هند", "صوص فراولة", "كريم باستري", "اضافة بندق مبشور", "اضافة مرشملو", "جالون اوريو", "جالون لوتس", "علبة كيري", "علبة جلاكسي", "علبة مندولين", "قرنفل حبوب", "جوز هند خشن"]
+        items: [
+            "شيكولاته وايت", "شيكولاته براون", "شيكولاته كندر", "شيكولاته لوتس", "شيكولاته بندق",
+            "صوص كرمَل", "صوص درك", "صوص كوكيز", "صوص بندق", "صوص جوز هند",
+            "صوص فراولة", "كريم باستري", "اضافة بندق مبشور", "اضافة مرشملو",
+            "جالون اوريو", "جالون لوتس", "علبة كيري", "علبة جلاكسي", "علبة مندولين",
+            "قرنفل حبوب", "جوز هند خشن"
+        ]
     },
     {
         name: "قائمة 4 (الأكواب والمستلزمات)",
-        items: ["كوب سخن ٤", "كوب سخن ٧", "كوب سخن ٨", "كوب سخن ١٢", "غطاء سخن", "كوب ساقعان ١٠", "كوب ساقعان ١٢", "كوب ساقعان ١٦", "كوب صين داي", "غطاء ساقعان", "علب وافل M", "علب وافل L", "علب وافل XL", "جراب بوست", "جراب أيس كريم", "ورق زيدة", "سندضة بلاستيك", "شاليموه", "معالق", "شوكة", "سكينة", "أكياس كراش", "اطباق فوم"]
+        items: [
+            "كوب سخن ٤", "كوب سخن ٧", "كوب سخن ٨", "كوب سخن ١٢", "غطاء سخن",
+            "كوب ساقعان ١٠", "كوب ساقعان ١٢", "كوب ساقعان ١٦", "كوب صين داي",
+            "غطاء ساقعان", "علب وافل M", "علب وافل L", "علب وافل XL",
+            "جراب بوست", "جراب أيس كريم", "ورق زيدة", "سندضة بلاستيك",
+            "شاليموه", "معالق", "شوكة", "سكينة", "أكياس كراش", "اطباق فوم"
+        ]
     },
     {
         name: "قائمة 5 (المستلزمات العامة)",
-        items: ["مكسرات سحلب", "عصير تفاح", "زبيب", "قرفة عيدان", "سحلب", "فانيليا", "بيكينج بودر", "زبده", "كرتونة مياه", "بالتة ردبل", "مناديل", "بكر استريتش", "باليتة تشيز كيك", "علبة كرواسون", "دقيق", "زيت", "مفرش سفرة", "بكر كاشير", "لبن"]
+        items: [
+            "مكسرات سحلب", "عصير تفاح", "زبيب", "قرفة عيدان", "سحلب",
+            "فانيليا", "بيكينج بودر", "زبده", "كرتونة مياه", "بالتة ردبل",
+            "مناديل", "بكر استريتش", "باليتة تشيز كيك", "علبة كرواسون",
+            "دقيق", "زيت", "مفرش سفرة", "بكر كاشير", "لبن"
+        ]
     },
     {
         name: "قائمة 6 (المخزون العام)",
-        items: ["مخزون عام 1", "مخزون عام 2", "مخزون عام 3", "مخزون عام 4", "مخزون عام 5"]
+        items: [
+            "مخزون عام 1", "مخزون عام 2", "مخزون عام 3", "مخزون عام 4", "مخزون عام 5"
+        ]
     }
 ];
 
@@ -37,7 +70,7 @@ let isDeliveredUnlocked = false;
 
 function getBranchInfo() {
     return {
-        name: localStorage.getItem('salma_branch_name') || "فرع غير معروف",
+        name: localStorage.getItem('salma_branch_name') || "فرع غير محدد",
         phone: localStorage.getItem('salma_branch_phone') || "01000000000"
     };
 }
@@ -54,10 +87,12 @@ let pendingUnlockType = null;
 
 window.addEventListener("DOMContentLoaded", () => {
     setTimeout(() => {
-        document.getElementById("splash-screen").style.opacity = "0";
+        const splash = document.getElementById("splash-screen");
+        if (splash) splash.style.opacity = "0";
         setTimeout(() => {
-            document.getElementById("splash-screen").classList.add("hidden");
-            document.getElementById("app-container").classList.remove("hidden");
+            if (splash) splash.classList.add("hidden");
+            const app = document.getElementById("app-container");
+            if (app) app.classList.remove("hidden");
         }, 500);
     }, 2000);
 
@@ -74,14 +109,16 @@ function toggleTheme() {
 
 function updateBranchTag() {
     const branch = getBranchInfo();
-    document.getElementById('branch-display-tag').innerText = `فرع: ${branch.name}`;
+    const tag = document.getElementById('branch-display-tag');
+    if (tag) tag.innerText = `فرع: ${branch.name}`;
 }
 
 function renderTabs() {
     const wrapper = document.getElementById("tabs-wrapper");
+    if (!wrapper) return;
     wrapper.innerHTML = "";
     if (currentCategoryIndex >= categories.length) currentCategoryIndex = 0;
-    
+
     categories.forEach((cat, idx) => {
         const btn = document.createElement("button");
         btn.className = `tab-btn ${idx === currentCategoryIndex ? 'active' : ''}`;
@@ -103,14 +140,18 @@ function switchCategory(index) {
 
 function renderTable() {
     const tbody = document.getElementById("inventory-body");
+    if (!tbody) return;
     tbody.innerHTML = "";
 
     if (categories.length === 0) return;
     const currentCat = categories[currentCategoryIndex];
-    document.getElementById("category-title").innerText = currentCat.name;
+    const catTitle = document.getElementById("category-title");
+    if (catTitle) catTitle.innerText = currentCat.name;
 
-    document.getElementById("lock-icon-rec").innerText = isReceivedUnlocked ? "🔓" : "🔒";
-    document.getElementById("lock-icon-del").innerText = isDeliveredUnlocked ? "🔓" : "🔒";
+    const lockRec = document.getElementById("lock-icon-rec");
+    const lockDel = document.getElementById("lock-icon-del");
+    if (lockRec) lockRec.innerText = isReceivedUnlocked ? "🔓" : "🔒";
+    if (lockDel) lockDel.innerText = isDeliveredUnlocked ? "🔓" : "🔒";
 
     const todayStr = new Date().toISOString().split('T')[0];
 
@@ -216,12 +257,12 @@ function loadSavedData() {
     }
 }
 
-// Export and send directly to HQ App storage bridge (No WhatsApp)
+// Save & Send Report directly to Google Apps Script Cloud
 async function handleSaveAndExport() {
     saveCurrentCategoryState();
     const branch = getBranchInfo();
 
-    if (!confirm(`هل أنت متأكد من حفظ وتصدير تقرير الجرد لـ (${branch.name}) وإرساله للفرع الرئيسي؟`)) return;
+    if (!confirm(`هل أنت متأكد من حفظ وتصدير تقرير الجرد لـ (${branch.name}) وإرساله للفرع الرئيسي عبر السحابة؟`)) return;
 
     const workbook = XLSX.utils.book_new();
     const todayStr = new Date().toISOString().split('T')[0];
@@ -254,32 +295,40 @@ async function handleSaveAndExport() {
     });
 
     const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-    const excelBlob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-    const downloadUrl = URL.createObjectURL(excelBlob);
+    const base64String = btoa(String.fromCharCode.apply(null, new Uint8Array(excelBuffer)));
+    const dataUri = `data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,${base64String}`;
     const fileName = `Inventory_${branch.name}_${todayStr}.xlsx`;
 
     const newReport = {
+        action: "add",
         id: Date.now(),
         branchName: branch.name,
         phone: branch.phone,
         date: todayStr,
         excelFileName: fileName,
-        downloadUrl: downloadUrl,
-        checked: false
+        downloadUrl: dataUri
     };
 
-    // Push directly to HQ shared log (Simulating direct web link transfer)
-    let existingHQReports = JSON.parse(localStorage.getItem('salma_hq_reports_log') || '[]');
-    existingHQReports.unshift(newReport);
-    localStorage.setItem('salma_hq_reports_log', JSON.stringify(existingHQReports));
+    try {
+        await fetch(CLOUD_API_URL, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(newReport)
+        });
 
-    categories.forEach((_, catIdx) => localStorage.removeItem(`salma_cat_${catIdx}`));
-    isReceivedUnlocked = false;
-    isDeliveredUnlocked = false;
-    renderTable();
-    alert("تم إرسال تقرير الجرد بنجاح إلى نظام الفرع الرئيسي (HQ)!");
+        categories.forEach((_, catIdx) => localStorage.removeItem(`salma_cat_${catIdx}`));
+        isReceivedUnlocked = false;
+        isDeliveredUnlocked = false;
+        renderTable();
+        alert("تم رفع تقرير الجرد بنجاح إلى السحابة وإرساله للفرع الرئيسي!");
+    } catch (error) {
+        console.error(error);
+        alert("حدث خطأ أثناء إرسال التقرير. تأكد من الاتصال بالإنترنت.");
+    }
 }
 
+// Admin Panel Functions
 function openAdminModal() {
     document.getElementById('admin-master-input').value = "";
     document.getElementById('admin-login-view').style.display = "block";
@@ -315,28 +364,37 @@ function verifyAdminLogin() {
 
 function populateAdminDropdowns() {
     const addSel = document.getElementById('add-item-category-select');
-    addSel.innerHTML = "";
-    categories.forEach((cat, idx) => {
-        addSel.innerHTML += `<option value="${idx}">${cat.name}</option>`;
-    });
+    if (addSel) {
+        addSel.innerHTML = "";
+        categories.forEach((cat, idx) => {
+            addSel.innerHTML += `<option value="${idx}">${cat.name}</option>`;
+        });
+    }
 
     const delCatSel = document.getElementById('del-item-category-select');
-    delCatSel.innerHTML = "";
-    categories.forEach((cat, idx) => {
-        delCatSel.innerHTML += `<option value="${idx}">${cat.name}</option>`;
-    });
-    populateItemsForDeletion();
+    if (delCatSel) {
+        delCatSel.innerHTML = "";
+        categories.forEach((cat, idx) => {
+            delCatSel.innerHTML += `<option value="${idx}">${cat.name}</option>`;
+        });
+        populateItemsForDeletion();
+    }
 
     const delCatOnlySel = document.getElementById('del-category-select');
-    delCatOnlySel.innerHTML = "";
-    categories.forEach((cat, idx) => {
-        delCatOnlySel.innerHTML += `<option value="${idx}">${cat.name}</option>`;
-    });
+    if (delCatOnlySel) {
+        delCatOnlySel.innerHTML = "";
+        categories.forEach((cat, idx) => {
+            delCatOnlySel.innerHTML += `<option value="${idx}">${cat.name}</option>`;
+        });
+    }
 }
 
 function populateItemsForDeletion() {
-    const catIdx = document.getElementById('del-item-category-select').value;
+    const catIdxEl = document.getElementById('del-item-category-select');
     const itemSel = document.getElementById('del-item-name-select');
+    if (!catIdxEl || !itemSel) return;
+
+    const catIdx = catIdxEl.value;
     itemSel.innerHTML = "";
 
     if (categories[catIdx] && categories[catIdx].items) {
