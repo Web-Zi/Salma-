@@ -180,10 +180,21 @@ function saveCurrentCategoryState() {
     localStorage.setItem(`salma_cat_${currentCategoryIndex}`, JSON.stringify(catData));
 }
 
-// Password Unlock Handlers
+// Toggle Lock / Unlock for Received and Delivered columns (Fixed Toggle Logic)
 function requestColumnUnlock(type) {
-    if (type === 'received' && isReceivedUnlocked) return;
-    if (type === 'delivered' && isDeliveredUnlocked) return;
+    if (type === 'received') {
+        if (isReceivedUnlocked) {
+            isReceivedUnlocked = false;
+            renderTable();
+            return;
+        }
+    } else if (type === 'delivered') {
+        if (isDeliveredUnlocked) {
+            isDeliveredUnlocked = false;
+            renderTable();
+            return;
+        }
+    }
 
     pendingUnlockTarget = type;
     document.getElementById('modal-title').innerText = type === 'received' ? "فتح عمود (مستلم)" : "فتح عمود (مسلم)";
@@ -213,12 +224,12 @@ function verifyPasswordAction() {
     }
 }
 
-// Save & Sync Handler (PDF / Document Format)
+// Save & Sync Handler (Document / Report Format)
 async function handleSaveAndExport() {
     saveCurrentCategoryState();
     const branch = getBranchInfo();
 
-    if (!confirm(`هل أنت متأكد من حفظ وتصدير تقرير الجرد لـ (${branch.name}) بصيغة التقرير المباشر وإرساله للفرع الرئيسي؟`)) return;
+    if (!confirm(`هل أنت متأكد من حفظ وتصدير تقرير الجرد لـ (${branch.name}) وإرساله للفرع الرئيسي؟`)) return;
 
     const todayStr = new Date().toISOString().split('T')[0];
 
