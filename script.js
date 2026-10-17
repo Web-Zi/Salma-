@@ -1,5 +1,5 @@
 // =========================================================================
-// 🔗 PLACEHOLDER: Paste your Google Apps Script Web App URL below
+// 🔗 PASTE YOUR GOOGLE APPS SCRIPT WEB APP URL HERE:
 // =========================================================================
 const CLOUD_API_URL = "https://script.google.com/macros/s/AKfycby-HCCNrYC-ZB0IKRFfZP2w4CXz2SmLz3MNJbGUCRGsywhTNe096MLxLaOU6L4GA3PRuA/exec";
 
@@ -213,47 +213,79 @@ function verifyPasswordAction() {
     }
 }
 
-// Save & Sync to Google Cloud
+// Save & Sync Handler (PDF / Document Format)
 async function handleSaveAndExport() {
     saveCurrentCategoryState();
     const branch = getBranchInfo();
 
-    if (!confirm(`هل أنت متأكد من حفظ وتصدير تقرير الجرد لـ (${branch.name}) وإرساله للفرع الرئيسي عبر السحابة؟`)) return;
+    if (!confirm(`هل أنت متأكد من حفظ وتصدير تقرير الجرد لـ (${branch.name}) بصيغة التقرير المباشر وإرساله للفرع الرئيسي؟`)) return;
 
-    const workbook = XLSX.utils.book_new();
     const todayStr = new Date().toISOString().split('T')[0];
 
+    // Compile all category data
+    let fullReport = [];
     categories.forEach((cat, catIdx) => {
-        let reportData = [];
         const saved = localStorage.getItem(`salma_cat_${catIdx}`);
-
-        if (saved) {
-            reportData = JSON.parse(saved);
-        } else {
-            reportData = cat.items.map(item => ({
-                item: item, rowDate: todayStr, received: 0, newStock: 0, delivered: 0, total: 0, note: ""
-            }));
-        }
-
-        const formattedData = reportData.map(row => ({
-            "الصنف": row.item,
-            "التاريخ": row.rowDate,
-            "مستلم": Number(row.received),
-            "جديد": Number(row.newStock),
-            "مسلم": Number(row.delivered),
-            "العدد": Number(row.total),
-            "ملاحظات": row.note
+        const itemsData = saved ? JSON.parse(saved) : cat.items.map(item => ({
+            item: item, rowDate: todayStr, received: 0, newStock: 0, delivered: 0, total: 0, note: ""
         }));
 
-        const worksheet = XLSX.utils.json_to_sheet(formattedData);
-        worksheet['!views'] = [{ rightToLeft: true }];
-        XLSX.utils.book_append_sheet(workbook, worksheet, `قائمة ${catIdx + 1}`);
+        fullReport.push({
+            categoryName: cat.name,
+            items: itemsData
+        });
     });
 
-    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-    const base64String = btoa(String.fromCharCode.apply(null, new Uint8Array(excelBuffer)));
-    const dataUri = `data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,${base64String}`;
-    const fileName = `Inventory_${branch.name}_${todayStr}.xlsx`;
+    // Generate Document HTML Structure
+    let reportHtml = `
+        <div style="font-family: system-ui, sans-serif; direction: rtl; padding: 25px; background: #ffffff; color: #0f172a;">
+            <div style="text-align: center; border-bottom: 2px solid #2563eb; padding-bottom: 15px; margin-bottom: 20px;">
+                <h1 style="color: #1e293b; margin-bottom: 5px; font-size: 24px;">🏢 تقرير جرد فرع: ${branch.name}</h1>
+                <p style="color: #64748b; font-size: 14px; margin-top: 5px;">📅 <strong>التاريخ:</strong> ${todayStr} | 📞 <strong>الهاتف:</strong> ${branch.phone}</p>
+            </div>
+    `;
+
+    fullReport.forEach(cat => {
+        reportHtml += `<h3 style="color: #2563eb; margin-top: 25px; margin-bottom: 10px; border-right: 4px solid #2563eb; padding-right: 10px; font-size: 18px;">📋 ${cat.categoryName}</h3>`;
+        reportHtml += `
+            <table border="1" cellspacing="0" cellpadding="8" style="width: 100%; border-collapse: collapse; text-align: center; border-color: #cbd5e1; margin-bottom: 15px; font-size: 14px;">
+                <thead>
+                    <tr style="background-color: #f1f5f9; color: #334155;">
+                        <th>الصنف</th>
+                        <th>التاريخ</th>
+                        <th>مستلم</th>
+                        <th>جديد</th>
+                        <th>مسلم</th>
+                        <th>العدد النهائي</th>
+                        <th>ملاحظات</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+
+        cat.items.forEach(row => {
+            reportHtml += `
+                <tr>
+                    <td><strong>${row.item}</strong></td>
+                    <td>${row.rowDate || todayStr}</td>
+                    <td>${row.received || 0}</td>
+                    <td>${row.newStock || 0}</td>
+                    <td>${row.delivered || 0}</td>
+                    <td style="font-weight: bold; color: #2563eb; background: #eff6ff;">${row.total || 0}</td>
+                    <td>${row.note || '-'}</td>
+                </tr>
+            `;
+        });
+
+        reportHtml += `</tbody></table>`;
+    });
+
+    reportHtml += `</div>`;
+
+    // Encode to Base64 Data URI
+    const base64Data = btoa(unescape(encodeURIComponent(reportHtml)));
+    const dataUri = `data:text/html;charset=utf-8;base64,${base64Data}`;
+    const fileName = `Report_${branch.name}_${todayStr}.html`;
 
     const newReport = {
         action: "add",
@@ -261,12 +293,11 @@ async function handleSaveAndExport() {
         branchName: branch.name,
         phone: branch.phone,
         date: todayStr,
-        excelFileName: fileName,
-        downloadUrl: dataUri
+        fileName: fileName,
+        pdfDataUri: dataUri
     };
 
     try {
-        // text/plain;charset=utf-8 bypasses browser/WebView CORS preflight restrictions
         await fetch(CLOUD_API_URL, {
             method: "POST",
             headers: { "Content-Type": "text/plain;charset=utf-8" },
@@ -279,7 +310,7 @@ async function handleSaveAndExport() {
         isDeliveredUnlocked = false;
         renderTable();
 
-        alert("تم رفع تقرير الجرد بنجاح إلى السحابة وإرساله للفرع الرئيسي!");
+        alert("تم رفع التقرير بنجاح إلى السحابة وإرساله للفرع الرئيسي!");
     } catch (error) {
         console.error(error);
         alert("حدث خطأ أثناء إرسال التقرير. تأكد من الاتصال بالإنترنت.");
