@@ -57,17 +57,17 @@ let pendingUnlockTarget = null;
 // Passwords Helper
 function getPasswords() {
     return {
-        received: localStorage.getItem('salma_pass_received') || "1234",
-        delivered: localStorage.getItem('salma_pass_delivered') || "1234",
-        admin: localStorage.getItem('salma_pass_admin') || "9999"
+        received: localStorage.getItem('salma_pass_received') || "0000",
+        delivered: localStorage.getItem('salma_pass_delivered') || "0000",
+        admin: localStorage.getItem('salma_pass_admin') || "0000"
     };
 }
 
 // Branch Info Helper
 function getBranchInfo() {
     return {
-        name: localStorage.getItem('salma_branch_name') || "Resta",
-        phone: localStorage.getItem('salma_branch_phone') || "01000000000"
+        name: localStorage.getItem('salma_branch_name') || "اسم الفرع",
+        phone: localStorage.getItem('salma_branch_phone') || "01xxxxxxxxx"
     };
 }
 
